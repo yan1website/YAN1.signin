@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>YAN1 - Sign In</title>
+
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: Arial, sans-serif;
+            background:
+                radial-gradient(circle at top left, #173b78 0%, transparent 45%),
+                radial-gradient(circle at bottom right, #42176f 0%, transparent 45%),
+                #05070d;
+            color: white;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 420px;
+            padding: 40px 25px;
+            text-align: center;
+            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(15px);
+        }
+
+        h1 {
+            margin: 0 0 10px;
+            font-size: 42px;
+            letter-spacing: 8px;
+        }
+
+        p {
+            color: #bfc5d2;
+            margin-bottom: 30px;
+        }
+
+        #googleSignIn {
+            display: flex;
+            justify-content: center;
+            min-height: 44px;
+        }
+
+        #status {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #bfc5d2;
+            word-break: break-word;
+        }
+
+        .error {
+            color: #ff7777 !important;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <h1>YAN1</h1>
+
+    <p>Sign in with your Google account</p>
+
+    <div id="googleSignIn"></div>
+
+    <div id="status"></div>
+</div>
+
+
+<script>
+    // ============================================================
+    // YOUR GOOGLE CLIENT ID
+    // ============================================================
+
+    const CLIENT_ID =
+        "367502539128-4bc3ohihpe4ithrdcde53tbcv4mj0nv7.apps.googleusercontent.com";
+
+
+    // ============================================================
+    // DESTINATION PAGE
+    // ============================================================
+
+    const DESTINATION =
+        "https://yan1website.github.io/YAN1.signin/index2.html";
+
+
+    // ============================================================
+    // GOOGLE OAUTH TOKEN CLIENT
+    // ============================================================
+
+    let tokenClient;
+
+
+    function initializeGoogle() {
+
+        tokenClient = google.accounts.oauth2.initTokenClient({
+
+            client_id: CLIENT_ID,
+
+            // These scopes allow Google account information
+            // to be requested with the access token.
+            scope: "openid email profile",
+
+            callback: handleGoogleResponse
+
+        });
+
+
+        // Render our own button
+        const button = document.createElement("button");
+
+        button.innerHTML = "Sign in with Google";
+
+        button.style.padding = "12px 24px";
+        button.style.border = "none";
+        button.style.borderRadius = "8px";
+        button.style.background = "white";
+        button.style.color = "#222";
+        button.style.fontSize = "16px";
+        button.style.fontWeight = "600";
+        button.style.cursor = "pointer";
+
+        button.onclick = function () {
+
+            document.getElementById("status").textContent =
+                "Opening Google sign-in...";
+
+            /*
+             * Request an OAuth access token.
+             *
+             * prompt: "consent"
+             * makes Google show the account/permission screen.
+             */
+            tokenClient.requestAccessToken({
+                prompt: "consent"
+            });
+        };
+
+
+        document
+            .getElementById("googleSignIn")
+            .appendChild(button);
+    }
+
+
+    // ============================================================
+    // GOOGLE RESPONSE
+    // ============================================================
+
+    function handleGoogleResponse(response) {
+
+        if (response.error) {
+
+            console.error("Google OAuth error:", response);
+
+            document.getElementById("status").textContent =
+                "Google sign-in failed.";
+
+            document.getElementById("status")
+                .classList.add("error");
+
+            return;
+        }
+
+
+        // This is the access token received from Google.
+        const accessToken = response.access_token;
+
+
+        if (!accessToken) {
+
+            document.getElementById("status").textContent =
+                "No access token was received.";
+
+            document.getElementById("status")
+                .classList.add("error");
+
+            return;
+        }
+
+
+        console.log("Google access token received:");
+        console.log(accessToken);
+
+
+        document.getElementById("status").textContent =
+            "Sign-in successful. Opening YAN1...";
+
+
+        // ========================================================
+        // CREATE YOUR PERMANENT DESTINATION LINK
+        // ========================================================
+
+        const generatedLink =
+            DESTINATION +
+            "?access_token=" +
+            encodeURIComponent(accessToken);
+
+
+        console.log("Generated link:");
+        console.log(generatedLink);
+
+
+        // ========================================================
+        // OPEN GENERATED LINK IN A NEW TAB
+        // ========================================================
+
+        window.open(generatedLink, "_blank");
+
+
+        /*
+         * If the browser blocks the new tab, the generated URL
+         * is also printed in the console.
+         */
+    }
+
+
+    // ============================================================
+    // WAIT FOR GOOGLE IDENTITY SERVICES
+    // ============================================================
+
+    window.onload = function () {
+
+        const checkGoogle = setInterval(function () {
+
+            if (
+                window.google &&
+                google.accounts &&
+                google.accounts.oauth2
+            ) {
+
+                clearInterval(checkGoogle);
+
+                initializeGoogle();
+            }
+
+        }, 100);
+    };
+
+</script>
+
+</body>
+</html>
