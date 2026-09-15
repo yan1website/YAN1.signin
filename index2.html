@@ -115,6 +115,25 @@
             color: #ff7777;
             line-height: 1.5;
         }
+
+        /* ========================================================
+           YAN1 APP STATUS
+           ======================================================== */
+
+        #yan1AppStatus {
+            margin-top: 15px;
+            padding: 10px 14px;
+
+            border-radius: 10px;
+
+            background: rgba(0, 0, 0, 0.20);
+
+            color: #c9c9c9;
+
+            font-size: 13px;
+
+            line-height: 1.4;
+        }
     </style>
 </head>
 
@@ -124,11 +143,34 @@
 
     <h1>YAN1</h1>
 
+    <!-- ========================================================
+         YAN1 APP STATUS
+         ======================================================== -->
+
+    <div id="yan1AppStatus">
+        Trying to open in YAN1 App...
+    </div>
+
+
+    <!-- ========================================================
+         GOOGLE ACCOUNT LOADING
+         ======================================================== -->
+
     <div id="loading">
         Getting Google account information...
     </div>
 
+
+    <!-- ========================================================
+         ERROR
+         ======================================================== -->
+
     <div id="error"></div>
+
+
+    <!-- ========================================================
+         GOOGLE PROFILE
+         ======================================================== -->
 
     <div id="profile">
 
@@ -182,9 +224,11 @@
     // 1. GET ACCESS TOKEN FROM URL
     // ============================================================
 
-    const urlParams = new URLSearchParams(window.location.search);
+    const urlParams =
+        new URLSearchParams(window.location.search);
 
-    const accessToken = urlParams.get("access_token");
+    const accessToken =
+        urlParams.get("access_token");
 
 
     // ============================================================
@@ -199,7 +243,9 @@
 
     } else {
 
-        console.log("Access token received.");
+        console.log(
+            "Access token received."
+        );
 
         getGoogleUserInfo(accessToken);
     }
@@ -213,16 +259,18 @@
 
         try {
 
-            const response = await fetch(
-                "https://openidconnect.googleapis.com/v1/userinfo",
-                {
-                    method: "GET",
+            const response =
+                await fetch(
+                    "https://openidconnect.googleapis.com/v1/userinfo",
+                    {
+                        method: "GET",
 
-                    headers: {
-                        "Authorization": "Bearer " + token
+                        headers: {
+                            "Authorization":
+                                "Bearer " + token
+                        }
                     }
-                }
-            );
+                );
 
 
             // ====================================================
@@ -231,7 +279,8 @@
 
             if (!response.ok) {
 
-                const errorText = await response.text();
+                const errorText =
+                    await response.text();
 
                 console.error(
                     "Google returned an error:",
@@ -248,9 +297,13 @@
             // GET USER INFORMATION
             // ====================================================
 
-            const user = await response.json();
+            const user =
+                await response.json();
 
-            console.log("Google User Information:");
+            console.log(
+                "Google User Information:"
+            );
+
             console.log(user);
 
 
@@ -278,59 +331,93 @@
 
     function displayUser(user) {
 
-        document.getElementById("loading").style.display = "none";
+        document.getElementById("loading")
+            .style.display = "none";
 
-        document.getElementById("profile").style.display = "block";
+
+        document.getElementById("profile")
+            .style.display = "block";
 
 
-        // Profile picture
+        // ========================================================
+        // PROFILE PICTURE
+        // ========================================================
+
         if (user.picture) {
 
-            document.getElementById("profilePicture").src =
-                user.picture;
+            document.getElementById("profilePicture")
+                .src = user.picture;
 
         } else {
 
-            document.getElementById("profilePicture").style.display =
-                "none";
+            document.getElementById("profilePicture")
+                .style.display = "none";
         }
 
 
-        // Name
-        document.getElementById("name").textContent =
-            user.name || "Google User";
+        // ========================================================
+        // NAME
+        // ========================================================
+
+        document.getElementById("name")
+            .textContent =
+                user.name || "Google User";
 
 
-        // Email
-        document.getElementById("email").textContent =
-            user.email || "No email available";
+        // ========================================================
+        // EMAIL
+        // ========================================================
+
+        document.getElementById("email")
+            .textContent =
+                user.email || "No email available";
 
 
-        // Google ID
-        document.getElementById("googleId").textContent =
-            user.sub || "Not available";
+        // ========================================================
+        // GOOGLE ID
+        // ========================================================
+
+        document.getElementById("googleId")
+            .textContent =
+                user.sub || "Not available";
 
 
-        // First name
-        document.getElementById("firstName").textContent =
-            user.given_name || "Not available";
+        // ========================================================
+        // FIRST NAME
+        // ========================================================
+
+        document.getElementById("firstName")
+            .textContent =
+                user.given_name || "Not available";
 
 
-        // Last name
-        document.getElementById("lastName").textContent =
-            user.family_name || "Not available";
+        // ========================================================
+        // LAST NAME
+        // ========================================================
+
+        document.getElementById("lastName")
+            .textContent =
+                user.family_name || "Not available";
 
 
-        // Email verification
-        document.getElementById("emailVerified").textContent =
-            user.email_verified === true
-                ? "Yes"
-                : "No";
+        // ========================================================
+        // EMAIL VERIFICATION
+        // ========================================================
+
+        document.getElementById("emailVerified")
+            .textContent =
+                user.email_verified === true
+                    ? "Yes"
+                    : "No";
 
 
-        // Locale
-        document.getElementById("locale").textContent =
-            user.locale || "Not available";
+        // ========================================================
+        // LOCALE
+        // ========================================================
+
+        document.getElementById("locale")
+            .textContent =
+                user.locale || "Not available";
     }
 
 
@@ -340,14 +427,173 @@
 
     function showError(message) {
 
-        document.getElementById("loading").style.display = "none";
+        document.getElementById("loading")
+            .style.display = "none";
 
-        const error = document.getElementById("error");
 
-        error.textContent = message;
+        const error =
+            document.getElementById("error");
 
-        error.style.display = "block";
+
+        error.textContent =
+            message;
+
+
+        error.style.display =
+            "block";
     }
+
+
+    // ============================================================
+    // 6. YAN1 APP DETECTION
+    // ============================================================
+
+    function isYAN1App() {
+
+        return (
+            window.AndroidPython &&
+            typeof window.AndroidPython.executePython ===
+                "function"
+        );
+    }
+
+
+    // ============================================================
+    // 7. OPEN CURRENT WEBSITE IN YAN1 APP
+    // ============================================================
+
+    function openInYAN1App() {
+
+        // --------------------------------------------------------
+        // Already inside YAN1
+        // --------------------------------------------------------
+
+        if (isYAN1App()) {
+
+            console.log(
+                "YAN1 App detected. No redirect required."
+            );
+
+            document.getElementById("yan1AppStatus")
+                .textContent =
+                    "Running inside YAN1 App.";
+
+            return;
+        }
+
+
+        // --------------------------------------------------------
+        // Prevent repeated attempts
+        // --------------------------------------------------------
+
+        if (
+            sessionStorage.getItem(
+                "yan1_launched"
+            ) === "true"
+        ) {
+
+            console.log(
+                "YAN1 App launch already attempted."
+            );
+
+            document.getElementById("yan1AppStatus")
+                .textContent =
+                    "YAN1 App could not be opened. Continuing in browser.";
+
+            return;
+        }
+
+
+        sessionStorage.setItem(
+            "yan1_launched",
+            "true"
+        );
+
+
+        // --------------------------------------------------------
+        // Get the exact current URL
+        // --------------------------------------------------------
+
+        const currentURL =
+            window.location.href;
+
+
+        // --------------------------------------------------------
+        // Remove https://
+        // --------------------------------------------------------
+
+        const cleanPath =
+            currentURL.replace(
+                /^https?:\/\//,
+                ""
+            );
+
+
+        // --------------------------------------------------------
+        // Create Android Intent
+        // --------------------------------------------------------
+
+        const intentURL =
+            "intent://" +
+            cleanPath +
+            "#Intent;" +
+            "scheme=https;" +
+            "package=com.example1.yan1appgen1;" +
+            "S.browser_fallback_url=" +
+            encodeURIComponent(currentURL) +
+            ";" +
+            "end;";
+
+
+        console.log(
+            "Trying to open YAN1 App..."
+        );
+
+
+        document.getElementById("yan1AppStatus")
+            .textContent =
+                "Trying to open in YAN1 App...";
+
+
+        // --------------------------------------------------------
+        // Launch YAN1
+        // --------------------------------------------------------
+
+        window.location.href =
+            intentURL;
+
+
+        // --------------------------------------------------------
+        // If the browser remains here, app probably didn't open
+        // --------------------------------------------------------
+
+        setTimeout(function () {
+
+            if (!isYAN1App()) {
+
+                document.getElementById("yan1AppStatus")
+                    .textContent =
+                        "YAN1 App could not be opened. Continuing in browser.";
+
+            }
+
+        }, 1800);
+    }
+
+
+    // ============================================================
+    // 8. AUTOMATICALLY TRY TO OPEN YAN1 APP
+    // ============================================================
+
+    setTimeout(function () {
+
+        if (!isYAN1App()) {
+
+            openInYAN1App();
+
+        }
+
+    }, 1200);
 
 </script>
 
