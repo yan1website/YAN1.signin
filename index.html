@@ -159,16 +159,18 @@
     <div id="status"></div>
 
     <!-- ========================================================
-         OPEN BUTTON
-         ========================================================= -->
+         GENERATED LINK SECTION
+         ======================================================== -->
 
     <div id="openSection">
 
         <a
             id="openButton"
             href="#"
+            target="_blank"
+            rel="noopener noreferrer"
         >
-            Open in YAN1 App
+            Open Generated Link
         </a>
 
         <div id="generatedLink"></div>
@@ -194,11 +196,11 @@
 
     /*
      * The final URL will become:
-
+     *
      * https://yan1website.github.io/YAN1.signin/index2.html?access_token=ACCESS_TOKEN_HERE
      *
-     * where ACCESS_TOKEN_HERE is automatically replaced with the
-     * actual Google access token.
+     * ACCESS_TOKEN_HERE is automatically replaced with
+     * the actual Google access token.
      */
 
     const DESTINATION =
@@ -285,6 +287,7 @@
         document
             .getElementById("googleSignIn")
             .appendChild(button);
+
     }
 
 
@@ -347,8 +350,8 @@
         // ========================================================
 
         /*
-         * Example final result:
-
+         * Example:
+         *
          * https://yan1website.github.io/YAN1.signin/index2.html
          * ?access_token=ACCESS_TOKEN_HERE
          */
@@ -359,26 +362,24 @@
             encodeURIComponent(accessToken);
 
 
-        console.log(
-            "Generated YAN1 URL:",
-            generatedLink
-        );
-
-
         // ========================================================
-        // SHOW OPEN BUTTON
+        // SHOW SUCCESS MESSAGE
         // ========================================================
 
         document.getElementById("status").textContent =
-            "Google sign-in successful. Click below to continue.";
+            "Google sign-in successful. Your link has been generated.";
 
+
+        // ========================================================
+        // SHOW GENERATED LINK SECTION
+        // ========================================================
 
         document.getElementById("openSection")
             .style.display = "block";
 
 
         // ========================================================
-        // SET BUTTON URL
+        // SET GENERATED LINK
         // ========================================================
 
         const openButton =
@@ -389,20 +390,14 @@
             generatedLink;
 
 
-        /*
-         * Do NOT automatically redirect.
-         *
-         * The user must click the button.
-         */
-
-
         // ========================================================
-        // SHOW GENERATED URL
+        // DISPLAY GENERATED URL
         // ========================================================
 
         document.getElementById("generatedLink")
             .textContent =
                 generatedLink;
+
     }
 
 
@@ -424,6 +419,7 @@
                     clearInterval(checkGoogle);
 
                     initializeGoogle();
+
                 }
 
             }, 100);
