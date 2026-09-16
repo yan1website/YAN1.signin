@@ -307,6 +307,10 @@
             console.log(user);
 
 
+            // Store the verified Google profile without storing the access token.
+            storeGoogleUser(user);
+
+
             // ====================================================
             // DISPLAY INFORMATION
             // ====================================================
@@ -326,7 +330,63 @@
 
 
     // ============================================================
-    // 4. DISPLAY USER INFORMATION
+    // 4. STORE GOOGLE USER INFORMATION
+    // ============================================================
+
+    function storeGoogleUser(user) {
+
+        if (!window.InternalData ||
+            typeof window.InternalData.put !== "function" ||
+            typeof window.InternalData.setPolicy !== "function") {
+
+            console.warn(
+                "InternalData is unavailable. Google profile was not stored."
+            );
+
+            return;
+        }
+
+
+        try {
+
+            window.InternalData.put(
+                "google_user",
+                JSON.stringify(user)
+            );
+
+            window.InternalData.put(
+                "username",
+                user.name || "Google User"
+            );
+
+            window.InternalData.put(
+                "email",
+                user.email || ""
+            );
+
+            window.InternalData.put(
+                "google_id",
+                user.sub || ""
+            );
+
+            window.InternalData.setPolicy("allow");
+
+            console.log(
+                "Google profile stored and shared with other websites."
+            );
+
+        } catch (error) {
+
+            console.error(
+                "Unable to store Google profile in InternalData:",
+                error
+            );
+        }
+    }
+
+
+    // ============================================================
+    // 5. DISPLAY USER INFORMATION
     // ============================================================
 
     function displayUser(user) {
@@ -422,7 +482,7 @@
 
 
     // ============================================================
-    // 5. ERROR DISPLAY
+    // 6. ERROR DISPLAY
     // ============================================================
 
     function showError(message) {
@@ -445,7 +505,7 @@
 
 
     // ============================================================
-    // 6. YAN1 APP DETECTION
+    // 7. YAN1 APP DETECTION
     // ============================================================
 
     function isYAN1App() {
@@ -459,7 +519,7 @@
 
 
     // ============================================================
-    // 7. OPEN CURRENT WEBSITE IN YAN1 APP
+    // 8. OPEN CURRENT WEBSITE IN YAN1 APP
     // ============================================================
 
     function openInYAN1App() {
@@ -582,7 +642,7 @@
 
 
     // ============================================================
-    // 8. AUTOMATICALLY TRY TO OPEN YAN1 APP
+    // 9. AUTOMATICALLY TRY TO OPEN YAN1 APP
     // ============================================================
 
     setTimeout(function () {
