@@ -152,7 +152,7 @@
 
     <h1>YAN1</h1>
 
-    <p>Sign in with your Google account</p>
+    <p id="signInPrompt">Sign in with your Google account</p>
 
     <div id="googleSignIn"></div>
 
@@ -343,6 +343,12 @@
         console.log(
             "Google access token received."
         );
+
+        document.getElementById("googleSignIn")
+            .style.display = "none";
+
+        document.getElementById("signInPrompt")
+            .textContent = "Signed in with your Google account.";
 
 
         // ========================================================
