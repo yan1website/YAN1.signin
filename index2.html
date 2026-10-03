@@ -110,6 +110,51 @@
             word-break: break-word;
         }
 
+        .gender-form {
+            margin-top: 18px;
+            text-align: left;
+        }
+
+        .gender-form label {
+            display: block;
+            margin-bottom: 8px;
+            color: #c8d0df;
+        }
+
+        .gender-form select,
+        .gender-form button {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font: inherit;
+        }
+
+        .gender-form select {
+            margin-bottom: 12px;
+            background: #151a25;
+            color: white;
+        }
+
+        .gender-form button {
+            border: none;
+            background: #4778dc;
+            color: white;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .gender-form button:hover {
+            background: #3868c7;
+        }
+
+        #genderSaveStatus {
+            min-height: 18px;
+            margin-top: 10px;
+            color: #c9c9c9;
+            font-size: 13px;
+        }
+
         #error {
             display: none;
             color: #ff7777;
@@ -213,6 +258,17 @@
 
         </div>
 
+        <div class="gender-form">
+            <label for="gender">Gender</label>
+            <select id="gender" name="gender" required>
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+            </select>
+            <button id="saveGender" type="button">Save</button>
+            <div id="genderSaveStatus" role="status" aria-live="polite"></div>
+        </div>
+
     </div>
 
 </div>
@@ -229,6 +285,11 @@
 
     const accessToken =
         urlParams.get("access_token");
+
+    let currentUser = null;
+
+    document.getElementById("saveGender")
+        .addEventListener("click", saveGender);
 
 
     // ============================================================
@@ -300,6 +361,8 @@
             const user =
                 await response.json();
 
+            currentUser = user;
+
             console.log(
                 "Google User Information:"
             );
@@ -343,7 +406,7 @@
                 "InternalData is unavailable. Google profile was not stored."
             );
 
-            return;
+            return false;
         }
 
 
@@ -369,11 +432,20 @@
                 user.sub || ""
             );
 
+            if (user.gender) {
+                window.InternalData.put(
+                    "gender",
+                    user.gender
+                );
+            }
+
             window.InternalData.setPolicy("allow");
 
             console.log(
                 "Google profile stored and shared with other websites."
             );
+
+            return true;
 
         } catch (error) {
 
@@ -381,7 +453,40 @@
                 "Unable to store Google profile in InternalData:",
                 error
             );
+
+            return false;
         }
+    }
+
+    function saveGender() {
+
+        const gender =
+            document.getElementById("gender").value;
+
+        const status =
+            document.getElementById("genderSaveStatus");
+
+        if (!gender) {
+            status.textContent = "Please select Male or Female before saving.";
+            return;
+        }
+
+        if (!currentUser) {
+            status.textContent = "Your Google account information is not available yet.";
+            return;
+        }
+
+        const updatedUser = Object.assign({}, currentUser, {
+            gender: gender
+        });
+
+        if (!storeGoogleUser(updatedUser)) {
+            status.textContent = "Unable to save gender in the YAN1 app.";
+            return;
+        }
+
+        currentUser = updatedUser;
+        status.textContent = "Gender saved successfully.";
     }
 
 
